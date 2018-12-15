@@ -11,7 +11,7 @@ against the collection type. The method takes an object with 2 properties for co
 
 Usage:
 
-```ts
+<code-example header="src/app/reducers/user.reducer.ts">
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 export interface User {
@@ -19,7 +19,7 @@ export interface User {
   name: string;
 }
 
-export interface State extends EntityState<User> {
+export interface State extends EntityState&lt;User&gt; {
   // additional entities state properties
   selectedUserId: number;
 }
@@ -33,11 +33,11 @@ export function sortByName(a: User, b: User): number {
   return a.name.localeCompare(b.name);
 }
 
-export const adapter: EntityAdapter<User> = createEntityAdapter<User>({
+export const adapter: EntityAdapter&lt;User&gt; = createEntityAdapter&lt;User&gt;({
   selectId: selectUserId,
   sortComparer: sortByName,
 });
-```
+</code-example>
 
 ## Adapter Methods
 
@@ -51,7 +51,7 @@ Returns the `initialState` for entity state based on the provided type. Addition
 
 Usage:
 
-```ts
+<code-example header="src/app/reducers/user.reducer.ts">
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 export interface User {
@@ -59,7 +59,7 @@ export interface User {
   name: string;
 }
 
-export interface State extends EntityState<User> {
+export interface State extends EntityState&lt;User&gt; {
   // additional entities state properties
   selectedUserId: number | null;
 }
@@ -76,7 +76,7 @@ export function reducer(state = initialState, action): State {
     }
   }
 }
-```
+</code-example>
 
 ## Adapter Collection Methods
 
@@ -97,22 +97,18 @@ state if no changes were made.
 
 Usage:
 
-`user.model.ts`
-
-```ts
+<code-example header="src/app/models/user.model.ts">
 export interface User {
   id: string;
   name: string;
 }
-```
+</code-example>
 
-`user.actions.ts`
-
-```ts
+<code-example header="src/app/actions/user.actions.ts">
 import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 
-import { User } from './user.model';
+import { User } from '../models/user.model';
 
 export enum UserActionTypes {
   LOAD_USERS = '[User] Load Users',
@@ -160,13 +156,13 @@ export class UpsertUsers implements Action {
 export class UpdateUser implements Action {
   readonly type = UserActionTypes.UPDATE_USER;
 
-  constructor(public payload: { user: Update<User> }) {}
+  constructor(public payload: { user: Update&lt;User&gt; }) {}
 }
 
 export class UpdateUsers implements Action {
   readonly type = UserActionTypes.UPDATE_USERS;
 
-  constructor(public payload: { users: Update<User>[] }) {}
+  constructor(public payload: { users: Update&lt;User&gt;[] }) {}
 }
 
 export class DeleteUser implements Action {
@@ -196,21 +192,19 @@ export type UserActionsUnion =
   | DeleteUser
   | DeleteUsers
   | ClearUsers;
-```
+</code-example>
 
-`user.reducer.ts`
-
-```ts
+<code-example header="src/app/reducers/user.reducer.ts">
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { User } from './user.model';
-import { UserActionsUnion, UserActionTypes } from './user.actions';
+import { User } from '../models/user.model';
+import { UserActionsUnion, UserActionTypes } from '../actions/user.actions';
 
-export interface State extends EntityState<User> {
+export interface State extends EntityState&lt;User&gt; {
   // additional entities state properties
   selectedUserId: number | null;
 }
 
-export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
+export const adapter: EntityAdapter&lt;User&gt; = createEntityAdapter&lt;User&gt;();
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties
@@ -286,7 +280,7 @@ export const selectAllUsers = selectAll;
 
 // select the total user count
 export const selectUserTotal = selectTotal;
-```
+</code-example>
 
 ### Entity Selectors
 
@@ -296,9 +290,7 @@ The `getSelectors` method takes a selector function as its only argument to sele
 
 Usage:
 
-`reducers/index.ts`
-
-```ts
+<code-example header="src/app/reducers/index.ts">
 import {
   createSelector,
   createFeatureSelector,
@@ -310,11 +302,11 @@ export interface State {
   users: fromUser.State;
 }
 
-export const reducers: ActionReducerMap<State> = {
+export const reducers: ActionReducerMap&lt;State&gt; = {
   users: fromUser.reducer,
 };
 
-export const selectUserState = createFeatureSelector<fromUser.State>('users');
+export const selectUserState = createFeatureSelector&lt;fromUser.State&gt;('users');
 
 export const selectUserIds = createSelector(
   selectUserState,
@@ -342,4 +334,4 @@ export const selectCurrentUser = createSelector(
   selectCurrentUserId,
   (userEntities, userId) => userEntities[userId]
 );
-```
+</code-example>
