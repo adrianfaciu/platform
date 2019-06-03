@@ -52,11 +52,20 @@ export interface ReduxDevtoolsExtensionConnection {
   init(state?: any): void;
   error(anyErr: any): void;
 }
+
+type traceFn = (action: Action) => string;
+
 export interface ReduxDevtoolsExtensionConfig {
   features?: object | boolean;
   name: string | undefined;
   maxAge?: number;
   serialize?: boolean | SerializationOptions;
+
+  // This is needed until https://github.com/zalmoxisus/remotedev-app/issues/40 is fixed
+  type: 'redux';
+
+  trace: boolean | traceFn;
+  traceLimit: number;
 }
 
 export interface ReduxDevtoolsExtension {
@@ -243,6 +252,11 @@ export class DevtoolsExtension {
       name: config.name,
       features: config.features,
       serialize: config.serialize,
+
+      type: 'redux',
+
+      trace: true,
+      traceLimit: 25,
       // The action/state sanitizers are not added to the config
       // because sanitation is done in this class already.
       // It is done before sending it to the devtools extension for consistency:
